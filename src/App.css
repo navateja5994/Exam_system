@@ -228,6 +228,34 @@ header button:hover {
     margin: 20px 10px;
     padding: 20px;
   }
+  /* Responsive styles for UserSignup */
+  .user-signup-container {
+    padding: 10px;
+    max-width: 100%;
+  }
+  .user-signup-container form {
+    width: 100%;
+  }
+  .user-signup-container input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  /* Responsive styles for Profile */
+  .profile-container {
+    padding: 10px;
+    max-width: 100%;
+  }
+  /* Responsive styles for PracticePage */
+  .practice-page {
+    padding: 10px;
+    max-width: 100%;
+  }
+  .practice-page button {
+    width: 100%;
+  }
+  .practice-page pre {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -272,63 +300,5 @@ header button:hover {
   .profile-container {
     padding: 10px;
     max-width: 100%;
-  }
-}
-
-/* New styles for Home.js converted from inline styles */
-.home-container {
-  position: relative;
-  padding: 20px;
-  text-align: center;
-  min-height: 100vh;
-  z-index: 1;
-  background-color: transparent;
-}
-
-.home-header {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.home-header button {
-  flex: 1 1 auto;
-  min-width: 120px;
-  max-width: 180px;
-}
-
-/* Responsive typography and layout */
-@media (max-width: 768px) {
-  .App-header {
-    font-size: calc(8px + 2vmin);
-  }
-  .home-container {
-    padding: 10px;
-  }
-  .home-header {
-    flex-direction: column;
-    gap: 10px;
-  }
-  .home-header button {
-    max-width: 100%;
-  }
-  .card-container {
-    margin: 20px 10px;
-    padding: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .App-header {
-    font-size: calc(6px + 2vmin);
-  }
-  .home-container {
-    padding: 5px;
-  }
-  .card-container {
-    margin: 10px 5px;
-    padding: 15px;
   }
 }
