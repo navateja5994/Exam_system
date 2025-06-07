@@ -11,11 +11,25 @@ const UserLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const saveUserSession = (userCredential) => {
+    const sessions = JSON.parse(localStorage.getItem('userSessions') || '[]');
+    const newSession = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email,
+      token: userCredential.user.accessToken,
+      timestamp: new Date().toISOString()
+    };
+    const updatedSessions = sessions.filter(s => s.uid !== newSession.uid);
+    updatedSessions.push(newSession);
+    localStorage.setItem('userSessions', JSON.stringify(updatedSessions));
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      saveUserSession(userCredential);
       const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
       if (userDoc.exists() && userDoc.data().role === 'user') {
         navigate('/user/dashboard');
@@ -33,14 +47,14 @@ const UserLogin = () => {
       <BackgroundVideo />
       <div style={{ position: 'relative', padding: '20px', textAlign: 'center', backgroundColor: 'transparent', minHeight: '100vh' }}>
         <div style={{
-          maxWidth: '400px',
-          margin: '40px auto',
-          padding: '30px',
-          backgroundColor: 'transparent',
-          borderRadius: '12px',
-          boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-          textAlign: 'left'
-        }}>
+  maxWidth: '500px',
+  margin: '20px auto',
+  padding: '20px',
+  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+  borderRadius: '8px',
+  textAlign: 'left',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)'  // 👈 changed from '#fff'
+}}>
           <header>
             <button onClick={() => navigate('/')}>Back to Home</button>
           </header>
