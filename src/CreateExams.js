@@ -10,6 +10,7 @@ const CreateExams = () => {
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
+  const [questions, setQuestions] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const CreateExams = () => {
     setOptions(newOptions);
   };
 
-  const handleAddQuestion = async (e) => {
+  const handleAddQuestionToList = (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -42,19 +43,34 @@ const CreateExams = () => {
       setError('Please fill in all fields.');
       return;
     }
+    const newQuestion = {
+      courseId: selectedCourse,
+      questionText,
+      options,
+      correctAnswerIndex
+    };
+    setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
+    setQuestionText('');
+    setOptions(['', '', '', '']);
+    setCorrectAnswerIndex(0);
+    setSuccess('Question added to list!');
+  };
+
+  const handleSubmitAllQuestions = async () => {
+    setError('');
+    setSuccess('');
+    if (questions.length === 0) {
+      setError('No questions to submit.');
+      return;
+    }
     try {
-      await addDoc(collection(db, 'exams'), {
-        courseId: selectedCourse,
-        questionText,
-        options,
-        correctAnswerIndex
-      });
-      setSuccess('Question added successfully!');
-      setQuestionText('');
-      setOptions(['', '', '', '']);
-      setCorrectAnswerIndex(0);
+      for (const question of questions) {
+        await addDoc(collection(db, 'exams'), question);
+      }
+      setSuccess('All questions submitted successfully!');
+      setQuestions([]);
     } catch (err) {
-      setError('Failed to add question: ' + err.message);
+      setError('Failed to submit questions: ' + err.message);
     }
   };
 
@@ -85,7 +101,7 @@ const CreateExams = () => {
             <button onClick={() => navigate('/admin/dashboard')}>Back to Dashboard</button>
           </header>
           <h2>Create Exams</h2>
-          <form onSubmit={handleAddQuestion}>
+          <form onSubmit={handleAddQuestionToList}>
             <div>
               <label>Select Course:</label><br />
               <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} required>
@@ -127,8 +143,31 @@ const CreateExams = () => {
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
-            <button type="submit" style={{ marginTop: '10px' }}>Add Question</button>
+            <button type="submit" style={{ marginTop: '10px' }}>Add Question to List</button>
           </form>
+
+          {questions.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <h3>Questions to be submitted:</h3>
+              <ul>
+                {questions.map((q, idx) => (
+                  <li key={idx} style={{ marginBottom: '10px' }}>
+                    <strong>Q{idx + 1}:</strong> {q.questionText}
+                    <ul>
+                      {q.options.map((opt, i) => (
+                        <li key={i} style={{ color: i === q.correctAnswerIndex ? 'green' : 'black' }}>
+                          {opt} {i === q.correctAnswerIndex ? '(Correct)' : ''}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+              <button onClick={handleSubmitAllQuestions} style={{ marginTop: '10px' }}>
+                Submit All Questions
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Course List with Actions */}
