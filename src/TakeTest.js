@@ -18,7 +18,14 @@ const TakeTest = () => {
         const q = query(collection(db, 'exams'), where('courseId', '==', courseId));
         const querySnapshot = await getDocs(q);
         const questionsList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setQuestions(questionsList);
+
+        // Shuffle questionsList to jumble questions differently for each user
+        const shuffledQuestions = questionsList
+          .map(value => ({ value, sort: Math.random() }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ value }) => value);
+
+        setQuestions(shuffledQuestions);
         setLoading(false);
       } catch (err) {
         console.error('Failed to load questions:', err);
@@ -73,14 +80,14 @@ const TakeTest = () => {
       <>
         <div style={{ position: 'relative', padding: '20px', textAlign: 'center', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
           <div style={{
-            maxWidth: '700px',
-            margin: '20px auto',
-            padding: '20px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            borderRadius: '8px',
-            backgroundColor: '#fff',
-            textAlign: 'center'
-          }}>
+  maxWidth: '500px',
+  margin: '20px auto',
+  padding: '20px',
+  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+  borderRadius: '8px',
+  textAlign: 'left',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)'  // 👈 changed from '#fff'
+}}>
             <header style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
               <button onClick={() => navigate('/user/dashboard')}>Back to Dashboard</button>
             </header>
